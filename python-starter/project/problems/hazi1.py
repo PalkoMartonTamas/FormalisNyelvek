@@ -61,7 +61,7 @@ class DFAProblem(Problem):
         start_state = lines[2]
         accept_states = set(lines[3].split())  # Halmaz a gyors kereséshez
 
-        # Átmenetek beolvasása az 5. sortól
+        # Átmenetek beolvasása az sortól
         for line in lines[4:]:
             if not line:
                 continue
