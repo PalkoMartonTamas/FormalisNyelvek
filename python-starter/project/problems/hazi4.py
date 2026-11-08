@@ -34,38 +34,38 @@ class RegexProblem(Problem):
     def task_1(self, lines):
         """
         1. feladat: 10 különböző feltétel megszámolása a logban
-        a kiírásban megadott logcat szerkezet alapján.
+        pontosan a tanári regex felépítéséhez igazítva.
         """
         patterns = [
             # 1. az összes sort, amelyik 10. hónap 15-én jött létre
-            re.compile(r'^10-15 '),
+            re.compile(r'^10-15\b'),
 
             # 2. az összes sort, amelyik 10. hónap 15-én 10 óra 18 perc és 51 másodperckor jött létre
-            re.compile(r'^10-15 +10:18:51\b'),
+            re.compile(r'^10-15 +10:18:51\.'),
 
             # 3. az összes sort, amelyik 51 másodperckor jött létre (mindegy a perc)
-            re.compile(r'^[0-9-]+ +[0-9]{2}:[0-9]{2}:51\b'),
+            re.compile(r'^[0-9]{2}-[0-9]{2} +[0-9]{2}:[0-9]{2}:51\.'),
 
             # 4. az összes lowmemorykiller taget tartalmazó sor
-            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +[IDVEFAW] +[^:]*lowmemorykiller[^:]*:'),
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +[IDVEFAW] +lowmemorykiller *:'),
 
             # 5. az összes 10:18:51 kor keletkező 221-es process id-jú sort
-            re.compile(r'^[0-9-]+ +10:18:51(?:\.[0-9]+)? +221 +'),
+            re.compile(r'^[0-9-]+ +10:18:51\.[0-9]+ +221 +'),
 
             # 6. az összes hibát tartalmazó sort (E)
-            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +E\b'),
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +E +'),
 
-            # 7. az összes warningot (W) amit a PackageManager küld
-            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +W +[^:]*PackageManager[^:]*:'),
+            # 7. az összes warningot (W) amit a PackageManager küld (pontos tag név!)
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +W +PackageManager *:'),
 
-            # 8. az összes ExoPlayer-es debug (D) infót
+            # 8. az összes ExoPlayer-es debug (D) infót (ExoPlayer bárhol a tagben)
             re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +D +[^:]*ExoPlayer[^:]*:'),
 
             # 9. az összes java állomány pozíciót tartalmazó hibát és warningot (EW .java:)
-            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +[EW]\b.*\.java:'),
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +[EW] +.*\.java:'),
 
             # 10. az összes olyan sort, ami tartalmazza a Thread szót a message részben (nem a tagben)
-            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +[IDVEFAW] +.*?: .*Thread')
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +[IDVEFAW] +.+?: .*Thread')
         ]
 
         counts = [0] * 10
