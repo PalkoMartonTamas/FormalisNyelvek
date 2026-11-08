@@ -5,21 +5,12 @@ import re
 class RegexProblem(Problem):
 
     def initialize_parser(self, parser):
-        """
-        Hozzáadjuk az --rgx parancssori argumentumot, amely egy számot vár (1-től 5-ig).
-        """
         parser.add_argument('--rgx', type=int, help='A végrehajtandó regex feladat sorszáma (1-5)')
 
     def is_chosen_problem(self, args):
-        """
-        Akkor fut le ez a modul, ha a parancssorban megadták az --rgx kapcsolót.
-        """
         return hasattr(args, 'rgx') and args.rgx is not None
 
     def run(self, args):
-        """
-        Beolvassa a logfájlt, és a feladat sorszáma alapján meghívja a megfelelő regex feldolgozót.
-        """
         with open(args.input, 'r', encoding='utf-8', errors='replace') as f:
             lines = f.readlines()
 
@@ -42,40 +33,39 @@ class RegexProblem(Problem):
 
     def task_1(self, lines):
         """
-        1. feladat: 10 különböző feltétel megszámolása a logban.
-        Log sor általános felépítése:
-        MM-DD HH:MM:SS.mmm   PID   TID LEVEL TAG: MESSAGE
+        1. feladat: 10 különböző feltétel megszámolása a logban
+        a kiírásban megadott logcat szerkezet alapján.
         """
         patterns = [
-            # 1. 10. hónap 15-én jött létre
+            # 1. az összes sort, amelyik 10. hónap 15-én jött létre
             re.compile(r'^10-15 '),
 
-            # 2. 10. hónap 15-én 10 óra 18 perc és 51 másodperckor jött létre
-            re.compile(r'^10-15 10:18:51\.'),
+            # 2. az összes sort, amelyik 10. hónap 15-én 10 óra 18 perc és 51 másodperckor jött létre
+            re.compile(r'^10-15 +10:18:51\b'),
 
-            # 3. 51 másodperckor jött létre (mindegy a perc)
-            re.compile(r'^[0-9-]+\s+[0-9]{2}:[0-9]{2}:51\.'),
+            # 3. az összes sort, amelyik 51 másodperckor jött létre (mindegy a perc)
+            re.compile(r'^[0-9-]+ +[0-9]{2}:[0-9]{2}:51\b'),
 
-            # 4. lowmemorykiller taget tartalmazó sor
-            re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+[IDVEFAW]\s+[^\s:]*lowmemorykiller[^\s:]*\s*:'),
+            # 4. az összes lowmemorykiller taget tartalmazó sor
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +[IDVEFAW] +[^:]*lowmemorykiller[^:]*:'),
 
-            # 5. 10:18:51-kor keletkező 221-es process id-jú sor
-            re.compile(r'^[0-9-]+\s+10:18:51\.[0-9]+\s+221\s+'),
+            # 5. az összes 10:18:51 kor keletkező 221-es process id-jú sort
+            re.compile(r'^[0-9-]+ +10:18:51(?:\.[0-9]+)? +221 +'),
 
-            # 6. hibát tartalmazó sor (E)
-            re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+E\s+'),
+            # 6. az összes hibát tartalmazó sort (E)
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +E\b'),
 
-            # 7. warning (W), amit a PackageManager küld
-            re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+W\s+PackageManager\s*:'),
+            # 7. az összes warningot (W) amit a PackageManager küld
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +W +[^:]*PackageManager[^:]*:'),
 
-            # 8. ExoPlayer-es debug (D) infó
-            re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+D\s+[^\s:]*ExoPlayer[^\s:]*\s*:'),
+            # 8. az összes ExoPlayer-es debug (D) infót
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +D +[^:]*ExoPlayer[^:]*:'),
 
-            # 9. java állomány pozíciót tartalmazó hiba és warning (E vagy W ... .java:)
-            re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+[EW]\s+.*\.java:'),
+            # 9. az összes java állomány pozíciót tartalmazó hibát és warningot (EW .java:)
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +[EW]\b.*\.java:'),
 
-            # 10. tartalmazza a Thread szót a message részben (nem a tagben) -> tag: message
-            re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+[IDVEFAW]\s+.+?:\s+.*Thread')
+            # 10. az összes olyan sort, ami tartalmazza a Thread szót a message részben (nem a tagben)
+            re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +[IDVEFAW] +.*?: .*Thread')
         ]
 
         counts = [0] * 10
@@ -88,11 +78,9 @@ class RegexProblem(Problem):
 
     def task_2(self, lines):
         """
-        2. feladat: Az összes hiba (E sorok) származási helye (pl. HashMap.java)
-        az előfordulásuk sorrendjében.
+        2. feladat: Az összes hiba (E sorok) származási helye (pl. HashMap.java).
         """
-        # Csak az E szintű sorokban keressük a zárójelben lévő (.java:szám) mintát
-        pattern = re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+E\s+.*?\(([A-Za-z0-9_$]+\.java):[0-9]+\)')
+        pattern = re.compile(r'^[0-9-]+ +[0-9:.]+ +[0-9]+ +[0-9]+ +E +.*?\(([^():]+\.java):[0-9]+\)')
         results = []
 
         for line in lines:
@@ -104,9 +92,9 @@ class RegexProblem(Problem):
 
     def task_3(self, lines):
         """
-        3. feladat: Az összes különböző process id (PID) az előfordulási sorrendjüket megtartva.
+        3. feladat: Az összes különböző process id előfordulási sorrendben.
         """
-        pattern = re.compile(r'^[0-9-]+\s+[0-9:.]+\s+([0-9]+)\s+[0-9]+\s+[IDVEFAW]')
+        pattern = re.compile(r'^[0-9-]+ +[0-9:.]+ +([0-9]+) +[0-9]+ +[IDVEFAW]\b')
         seen_pids = set()
         ordered_pids = []
 
@@ -122,10 +110,9 @@ class RegexProblem(Problem):
 
     def task_4(self, lines):
         """
-        4. feladat: A legtöbb errort (E) tartalmazó process.
-        Forma: PID=xx (xx errors)
+        4. feladat: A legtöbb errort tartalmazó process: PID=xx (xx errors)
         """
-        pattern = re.compile(r'^[0-9-]+\s+[0-9:.]+\s+([0-9]+)\s+[0-9]+\s+E\s+')
+        pattern = re.compile(r'^[0-9-]+ +[0-9:.]+ +([0-9]+) +[0-9]+ +E\b')
         error_counts = {}
 
         for line in lines:
@@ -144,10 +131,9 @@ class RegexProblem(Problem):
 
     def task_5(self, lines):
         """
-        5. feladat: A fő szálon történt hibák (E) száma (amikor a PID és a TID megegyezik).
+        5. feladat: A fő szálon történt hibák (E) száma (PID == TID).
         """
-        # A \1 visszahivatkozás (backreference) biztosítja, hogy a TID pontosan ugyanaz legyen, mint a PID
-        pattern = re.compile(r'^[0-9-]+\s+[0-9:.]+\s+([0-9]+)\s+\1\s+E\s+')
+        pattern = re.compile(r'^[0-9-]+ +[0-9:.]+ +([0-9]+) +\1 +E\b')
         count = 0
 
         for line in lines:
