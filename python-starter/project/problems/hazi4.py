@@ -82,8 +82,8 @@ class RegexProblem(Problem):
                 if pattern.search(line):
                     counts[i] += 1
                     # --- DIAGNOSZTIKA 2: AJ ÉS BEMENET LEKÉRDEZÉSE ---
-                    import os, re
-                    info = [f"LINES COUNT: {len(lines)}"]
+                    import os
+                    info = [f"SAJAT COUNTS: {counts}", f"LINES COUNT: {len(lines)}"]
                     info.append(f"FIRST 5 LINES: {lines[:5]}")
 
                     eval_path = "../evaluate_formal.py"
@@ -94,11 +94,10 @@ class RegexProblem(Problem):
                         matches = re.findall(r'\bAJ\s*=\s*.{1,200}', content)
                         info.append(f"AJ MATCHES: {matches}")
 
-                        # Megnézzük az AK= definíciót is viszonyításnak
-                        matches_ak = re.findall(r'\bAK\s*=\s*.{1,100}', content)
-                        info.append(f"AK MATCHES: {matches_ak}")
-
                     raise RuntimeError("\n".join(info))
+                    # -------------------------------------------------
+
+                    return [str(c) for c in counts]
 
         return [str(c) for c in counts]
 
