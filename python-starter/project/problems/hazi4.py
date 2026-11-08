@@ -33,39 +33,37 @@ class RegexProblem(Problem):
 
     def task_1(self, lines):
         """
-        1. feladat: 10 különböző feltétel megszámolása a logban[cite: 3, 4].
-        Elvárt eredmények a tesztelőben:
-        [15554, 2816, 2825, 10, 1, 3196, 104, 54, 645, 244]
+        1. feladat: 10 különböző feltétel megszámolása a logban.
         """
         patterns = [
-            # 1. az összes sort, amelyik 10. hónap 15-én jött létre (15554)[cite: 3]
+            # 1. az összes sort, amelyik 10. hónap 15-én jött létre (15554)
             re.compile(r'^10-15 '),
 
-            # 2. az összes sort, amelyik 10. hónap 15-én 10 óra 18 perc és 51 másodperckor jött létre (2816)[cite: 3]
+            # 2. az összes sort, amelyik 10. hónap 15-én 10 óra 18 perc és 51 másodperckor jött létre (2816)
             re.compile(r'^10-15 10:18:51\.'),
 
-            # 3. az összes sort, amelyik 51 másodperckor jött létre (mindegy a perc) (2825)[cite: 3]
+            # 3. az összes sort, amelyik 51 másodperckor jött létre (mindegy a perc) (2825)
             re.compile(r'^[0-9-]+\s+[0-9]{2}:[0-9]{2}:51\.'),
 
-            # 4. az összes lowmemorykiller taget tartalmazó sor (10)[cite: 3]
+            # 4. az összes lowmemorykiller taget tartalmazó sor (10)
             re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+[IDVEFAW]\s+lowmemorykiller\s*:'),
 
-            # 5. az összes 10:18:51 kor keletkező 221-es process id-jú sort (1)[cite: 3]
+            # 5. az összes 10:18:51 kor keletkező 221-es process id-jú sort (1)
             re.compile(r'^[0-9-]+\s+10:18:51\.[0-9]+\s+221\s+'),
 
-            # 6. az összes hibát tartalmazó sort (E) (3196)[cite: 4]
+            # 6. az összes hibát tartalmazó sort (E) (3196)
             re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+E\s+'),
 
-            # 7. az összes warningot (W) amit a PackageManager küld (104)[cite: 4]
+            # 7. az összes warningot (W) amit a PackageManager küld (104)
             re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+W\s+PackageManager\s*:'),
 
-            # 8. az összes ExoPlayer-es debug (D) infót (54)[cite: 4]
-            re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+D\s+[^:]*ExoPlayer[^:]*:'),
+            # 8. az összes ExoPlayer-es debug (D) infót (54)
+            re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+D\s+.*ExoPlayer'),
 
-            # 9. az összes java állomány pozíciót tartalmazó hibát és warningot (EW .java:) (645)[cite: 4]
+            # 9. az összes java állomány pozíciót tartalmazó hibát és warningot (EW .java:) (645)
             re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+[EW]\s+.*\.java:'),
 
-            # 10. az összes olyan sort, ami tartalmazza a Thread szót a message részben (nem a tagben) (244)[cite: 4]
+            # 10. az összes olyan sort, ami tartalmazza a Thread szót a message részben (nem a tagben) (244)
             re.compile(r'^[0-9-]+\s+[0-9:.]+\s+[0-9]+\s+[0-9]+\s+[IDVEFAW]\s+.+?:\s+.*Thread')
         ]
 
@@ -74,11 +72,6 @@ class RegexProblem(Problem):
             for i, pattern in enumerate(patterns):
                 if pattern.search(line):
                     counts[i] += 1
-
-        expected = [15554, 2816, 2825, 10, 1, 3196, 104, 54, 645, 244]
-        if counts != expected:
-            # Ha bármelyik szám eltérne, kiírjuk a különbséget a naplóba, hogy lássuk melyik regex szorul finomításra
-            raise RuntimeError(f"ELTERES! Sajat: {counts} vs Elvart: {expected}")
 
         return [str(c) for c in counts]
 
