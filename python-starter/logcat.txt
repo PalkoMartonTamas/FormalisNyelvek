@@ -1,0 +1,12 @@
+10-15 10:18:51.254   601   601 E InputManager-JNI: at java.util.HashMap.putMapEntries (HashMap.java:500)
+10-15 10:18:51.300   221   221 I lowmemorykiller: Killing process 1234
+10-15 10:18:51.999   221   250 W PackageManager: Unknown permission android.permission.TEST (PackageManager.java:120)
+10-15 10:19:51.100   305   305 D ExoPlayerImpl: Starting playback in main Thread
+10-15 10:20:00.000   601   602 E ActivityManager: Crash in Thread-1 at com.android.server.am.ActivityManagerService.handleAppCrash (ActivityManagerService.java:142)
+10-15 10:20:10.500   601   601 E WindowManager: Window leak detected (WindowManager.java:88)
+10-16 08:15:51.050   400   401 D ExoPlayer: Buffering data
+10-16 09:00:00.000   500   500 I MyThreadTag: Just a normal message without the T-word
+10-16 09:01:00.000   500   500 W PackageManager: Another warning from PM
+10-16 09:02:00.000   700   701 E CustomTag: Simple error without stacktrace
+10-15 10:18:51.500   221   221 E lowmemorykiller: Out of memory error (LowMemory.java:45)
+10-15 12:00:00.000   800   800 I System: Background Thread started successfully
