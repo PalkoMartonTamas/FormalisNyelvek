@@ -81,22 +81,32 @@ class RegexProblem(Problem):
             for i, pattern in enumerate(patterns):
                 if pattern.search(line):
                     counts[i] += 1
-
-                    # --- DIAGNOSZTIKA A GITHUB ACTIONS LOGHOZ ---
+                    # --- DIAGNOSZTIKA (MEMÓRIA-BIZTOS) ---
                     import os
-                    print("=== SAJAT COUNTS EREDMENY ===", counts)
-                    try:
-                        # Megkeressük és kiírjuk az evaluate_formal.py tartalmát és a tesztfájlokat
-                        for root, dirs, files in os.walk(".."):
-                            for file in files:
-                                if "evaluate" in file or "expected" in file or "out" in file or ".py" in file:
-                                    full_path = os.path.join(root, file)
-                                    if "evaluate_formal.py" in file:
-                                        print(f"=== {full_path} ===")
-                                        with open(full_path, 'r', encoding='utf-8', errors='replace') as ef:
-                                            print(ef.read())
-                    except Exception as e:
-                        print("Diag error:", e)
+                    info = [f"SAJAT COUNTS: {counts}"]
+
+                    # 1. Megnézzük, milyen fájlok vannak a szülőmappában
+                    parent_files = []
+                    for root, dirs, files in os.walk(".."):
+                        if ".git" in root:
+                            continue
+                        for f in files:
+                            parent_files.append(os.path.join(root, f))
+                    info.append(f"FILES: {parent_files[:30]}")
+
+                    # 2. Megnézzük az evaluate_formal.py méretét és a kulcsszavak környékét
+                    eval_path = "../evaluate_formal.py"
+                    if os.path.exists(eval_path):
+                        with open(eval_path, "r", encoding="utf-8", errors="replace") as ef:
+                            content = ef.read()
+                        info.append(f"EVAL SIZE: {len(content)}")
+                        for kw in ["Problem 3", "Problem 4", "mini", "rgx"]:
+                            idx = content.find(kw)
+                            if idx != -1:
+                                info.append(f"KW '{kw}': {content[max(0, idx - 100):idx + 200]}")
+
+                    raise RuntimeError("\n".join(info))
+                    # -------------------------------------
 
         return [str(c) for c in counts]
 
